@@ -109,9 +109,9 @@ a:hover { text-decoration: underline; }
 .brand { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 18px; color: var(--ink); }
 .brand:hover { text-decoration: none; }
 .brand .mark {
-  width: 26px; height: 26px; border-radius: 8px;
-  background: radial-gradient(circle at 50% 120%, var(--sky-gold), var(--sky-coral) 45%, var(--sky-indigo) 90%);
-  box-shadow: 0 0 14px rgba(236, 139, 94, 0.4);
+  width: 28px; height: 28px; border-radius: 7px;
+  background: url("assets/icon.png") center/cover no-repeat;
+  box-shadow: 0 1px 5px rgba(0, 0, 0, 0.3);
 }
 .nav-actions { display: flex; align-items: center; gap: 8px; }
 .nav-actions a { color: var(--muted); font-size: 14px; font-weight: 600; padding: 8px 10px; }
