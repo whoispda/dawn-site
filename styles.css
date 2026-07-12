@@ -278,7 +278,7 @@ footer a:hover { color: var(--ink); }
 .app-card { display: flex; gap: 16px; align-items: center; background: var(--surface); border: 1px solid var(--card-stroke); border-radius: var(--radius); box-shadow: var(--shadow); padding: 20px; transition: transform .15s ease, border-color .15s ease; }
 .app-card:hover { text-decoration: none; transform: translateY(-2px); border-color: var(--accent); }
 .app-mark { flex: none; width: 54px; height: 54px; border-radius: 15px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 22px; color: #fff; }
-.app-mark.kairo { background: radial-gradient(circle at 50% 120%, #7be0c2, #2a9d8f 52%, #1c6a75 92%); box-shadow: 0 0 16px rgba(42,157,143,.35); }
+.app-mark.kairo { background: url("assets/kairo-icon.png") center/cover no-repeat; box-shadow: 0 1px 6px rgba(0,0,0,.3); }
 .app-card h4 { font-size: 18px; margin-bottom: 2px; color: var(--ink); }
 .app-card h4 .pill { font-size: 11px; font-weight: 700; color: var(--muted); border: 1px solid var(--line); border-radius: 999px; padding: 2px 8px; margin-left: 8px; vertical-align: middle; }
 .app-card p { color: var(--muted); font-size: 14px; margin-bottom: 6px; }
