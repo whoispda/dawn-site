@@ -297,3 +297,58 @@ footer a:hover { color: var(--ink); }
   .why-grid { grid-template-columns: 1fr; }
   .nav-actions a.hide-sm { display: none; }
 }
+
+/* ---------- ambient dawn field (persistent atmosphere) ---------- */
+.ambient {
+  position: fixed; inset: 0; z-index: -2; pointer-events: none;
+  background:
+    radial-gradient(44% 30% at 84% 4%, rgba(236,139,94,0.10), transparent 70%),
+    radial-gradient(42% 30% at 10% 22%, rgba(94,92,230,0.12), transparent 70%),
+    radial-gradient(60% 40% at 50% 110%, rgba(154,110,208,0.12), transparent 72%);
+  animation: ambientdrift 30s ease-in-out infinite alternate;
+}
+@keyframes ambientdrift {
+  from { transform: translate3d(-1.5%, 0, 0) scale(1.02); }
+  to   { transform: translate3d(1.5%, -1.2%, 0) scale(1.06); }
+}
+@media (prefers-reduced-motion: reduce) { .ambient { animation: none; } }
+
+/* the hero phone breathes */
+@media (prefers-reduced-motion: no-preference) {
+  .hero .phone.tilt { animation: phonefloat 8s ease-in-out infinite; }
+}
+@keyframes phonefloat {
+  0%, 100% { transform: rotate(2deg) translateY(0); }
+  50%      { transform: rotate(2deg) translateY(-12px); }
+}
+
+/* ---------- one night with Dawn (narrative) ---------- */
+.nightline { max-width: 660px; margin: 0 auto; }
+.beat {
+  position: relative; border: 1px solid var(--card-stroke); border-radius: 20px;
+  background:
+    radial-gradient(120% 120% at 0% 0%, color-mix(in srgb, var(--bc, var(--accent)) 12%, transparent), transparent 55%),
+    var(--surface);
+  box-shadow: var(--shadow); padding: 22px 24px 22px 28px; overflow: hidden;
+}
+.beat::before {
+  content: ""; position: absolute; left: 0; top: 18px; bottom: 18px;
+  width: 4px; border-radius: 4px; background: var(--bc, var(--accent));
+}
+.beat .when {
+  font-size: 12px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase;
+  color: var(--bc, var(--accent)); margin-bottom: 10px;
+}
+.beat .when span { color: var(--faint); font-weight: 600; letter-spacing: 0; text-transform: none; margin-left: 10px; }
+.beat .say { font-family: ui-serif, "New York", Georgia, serif; font-size: 20px; line-height: 1.4; margin-bottom: 10px; text-wrap: balance; }
+.beat .do { color: var(--muted); font-size: 15px; }
+.beat .do b { color: var(--bc, var(--accent)); font-weight: 700; }
+.brg { text-align: center; color: var(--faint); font-size: 14px; padding: 12px 0; }
+.brg::before { content: "\2193  "; opacity: .7; }
+.nightcap { text-align: center; max-width: 42ch; margin: 26px auto 0; }
+.nightcap p { color: var(--muted); font-size: 18px; }
+.nightcap .cap {
+  margin-top: 10px; font-family: ui-serif, "New York", Georgia, serif; font-size: 24px;
+  background: linear-gradient(96deg, var(--sky-indigo), var(--sky-coral) 80%, var(--sky-gold));
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+}

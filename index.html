@@ -23,6 +23,7 @@
 </script>
 </head>
 <body>
+<div class="ambient" aria-hidden="true"></div>
 
 <nav class="nav">
   <a class="brand" href="index.html"><span class="mark" aria-hidden="true"></span>Dawn</a>
@@ -121,6 +122,38 @@
 
 </div>
 
+<!-- ============ ONE NIGHT WITH DAWN ============ -->
+<section class="wrap">
+  <div class="reveal" style="text-align:center;margin-bottom:34px">
+    <div class="section-eyebrow" style="color:var(--sleep)">A night in the life</div>
+    <h2 class="section-title serif">One night with Dawn.</h2>
+    <p class="section-sub" style="margin:10px auto 0">The hours nobody sees — made a little calmer, and a little clearer by morning.</p>
+  </div>
+  <div class="nightline">
+    <div class="beat reveal" style="--bc:var(--sleep)">
+      <div class="when">3:04 AM<span>3AM Mode</span></div>
+      <p class="say">The dimmed, one-handed screen — one tap logs the feed.</p>
+      <p class="do">No lights, no waking all the way up. <b>Back to sleep in seconds.</b></p>
+    </div>
+    <div class="brg reveal">By the time you stir again…</div>
+    <div class="beat reveal" style="--bc:var(--accent)">
+      <div class="when">6:20 AM<span>Night Recap</span></div>
+      <p class="say">&ldquo;Three feeds, one long four-hour stretch. Your longest yet.&rdquo;</p>
+      <p class="do">Your whole night, <b>read back in a sentence</b> — no scrolling required.</p>
+    </div>
+    <div class="brg reveal">And as the day begins…</div>
+    <div class="beat reveal" style="--bc:var(--gold)">
+      <div class="when">Morning<span>Golden Hour</span></div>
+      <p class="say">&ldquo;Next nap window looks like 8:41 – 10:25. Watch for sleepy cues.&rdquo;</p>
+      <p class="do">The rhythm you've been logging, <b>turned into a plan for today.</b></p>
+    </div>
+  </div>
+  <div class="nightcap reveal">
+    <p>You logged the night. Dawn read it back. And the morning already makes a little more sense.</p>
+    <p class="cap">That's the whole idea.</p>
+  </div>
+</section>
+
 <!-- ============ PRIVACY PILLAR ============ -->
 <section id="privacy" class="wrap">
   <div class="pillar reveal">
@@ -217,7 +250,7 @@
       <h5>Company</h5>
       <a href="privacy.html">Privacy Policy</a>
       <a href="support.html">Support</a>
-      <a href="mailto:hello@kairofasting.com">Contact</a>
+      <a href="mailto:dawn@kairofasting.com">Contact</a>
     </div>
   </div>
 </footer>
@@ -277,7 +310,7 @@
       if (!email) return;
       var subject = encodeURIComponent("Dawn early access");
       var body = encodeURIComponent("Please add me to the Dawn waitlist: " + email);
-      window.location.href = "mailto:hello@kairofasting.com?subject=" + subject + "&body=" + body;
+      window.location.href = "mailto:dawn@kairofasting.com?subject=" + subject + "&body=" + body;
       note.textContent = "Thanks! Your mail app is opening — hit send and you're on the list.";
     });
   })();
