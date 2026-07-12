@@ -4,316 +4,510 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Dawn: Baby Tracker — the calm, private app that learns your baby's rhythm</title>
-<meta name="description" content="Track feeds, sleep, and diapers in seconds — then let Dawn learn your baby's rhythm and gently predict what's next. No account, no ads, all on your device.">
+<meta name="description" content="Dawn learns your baby's rhythm and tells you what's coming next. Feeds, sleep, and naps, all free and entirely on your iPhone. No account. No ads. Nothing collected.">
 <link rel="icon" href="assets/icon.png">
 <meta property="og:title" content="Dawn: Baby Tracker">
-<meta property="og:description" content="The calm, private baby tracker — smarts without the price or the data harvesting. Predictions that never leave your phone.">
-<meta property="og:type" content="website">
-<meta property="og:image" content="assets/og-image.png">
-<meta name="twitter:card" content="summary_large_image">
-<link rel="stylesheet" href="styles.css">
-<script>
-  // Set theme before paint to avoid a flash.
-  (function () {
-    try {
-      var t = localStorage.getItem("dawn-theme");
-      if (t) document.documentElement.setAttribute("data-theme", t);
-    } catch (e) {}
-  })();
-</script>
+<meta property="og:description" content="The smart baby app that gives away what other apps charge for. Nap predictions, growth curves, and insights, all free, all on your device.">
+<meta property="og:image" content="assets/icon.png">
+<style>
+:root{
+  --bg0:#0a0a12; --bg1:#12121e; --surface:#15151f; --surface2:#1b1b28;
+  --ink:#f2f1fa; --muted:#adacc6; --faint:#6f6e88; --line:#26263a;
+  --accent:#8f8df8; --gold:#e2bd72;
+  --indigo:#5e5ce6; --violet:#9a6ed0; --coral:#ec8b5e; --sun:#f4b556;
+  --feed:#46a7b5; --sleep:#7d7bf0; --growth:#5aa46e; --amber:#c79552;
+  --stroke:rgba(255,255,255,.07); --shadow:0 2px 8px rgba(0,0,0,.4),0 24px 60px rgba(0,0,0,.5);
+  --r:24px; --maxw:1120px;
+  color-scheme:dark;
+}
+:root[data-theme="light"]{
+  --bg0:#f2f0f9; --bg1:#f8f6fd; --surface:#ffffff; --surface2:#f6f4fc;
+  --ink:#17162a; --muted:#54536e; --faint:#8a89a3; --line:#e7e4f2;
+  --accent:#5b59d6; --gold:#8c6614;
+  --stroke:rgba(0,0,0,.06); --shadow:0 1px 3px rgba(30,25,60,.06),0 18px 44px rgba(60,52,120,.12);
+  color-scheme:light;
+}
+@media (prefers-color-scheme:light){
+  :root:not([data-theme]){
+    --bg0:#f2f0f9; --bg1:#f8f6fd; --surface:#ffffff; --surface2:#f6f4fc;
+    --ink:#17162a; --muted:#54536e; --faint:#8a89a3; --line:#e7e4f2;
+    --accent:#5b59d6; --gold:#8c6614;
+    --stroke:rgba(0,0,0,.06); --shadow:0 1px 3px rgba(30,25,60,.06),0 18px 44px rgba(60,52,120,.12);
+    color-scheme:light;
+  }
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+body{
+  font-family:ui-rounded,"SF Pro Rounded",-apple-system,BlinkMacSystemFont,system-ui,sans-serif;
+  color:var(--ink); background:var(--bg0); line-height:1.6; -webkit-font-smoothing:antialiased; overflow-x:hidden;
+}
+.serif{font-family:ui-serif,"New York",Georgia,serif}
+.wrap{max-width:var(--maxw);margin:0 auto;padding:0 24px}
+.narrow{max-width:720px;margin:0 auto;padding:0 24px}
+a{color:var(--accent);text-decoration:none}
+:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:6px}
+
+/* nav */
+.nav{position:sticky;top:0;z-index:50;display:flex;align-items:center;justify-content:space-between;
+  padding:12px 24px;backdrop-filter:saturate(160%) blur(18px);
+  background:color-mix(in srgb,var(--bg0) 70%,transparent);border-bottom:1px solid var(--line)}
+.brand{display:flex;align-items:center;gap:10px;font-weight:750;font-size:19px;color:var(--ink)}
+.brand:hover{text-decoration:none}
+.brand .mk{width:30px;height:30px;border-radius:8px;background:url("assets/icon.png") center/cover;box-shadow:0 1px 5px rgba(0,0,0,.35)}
+.navlinks{display:flex;align-items:center;gap:6px}
+.navlinks a{color:var(--muted);font-size:14px;font-weight:600;padding:8px 12px}
+.navlinks a:hover{color:var(--ink);text-decoration:none}
+.tt{width:38px;height:38px;border-radius:999px;border:1px solid var(--line);background:var(--surface2);color:var(--ink);cursor:pointer;font-size:15px}
+.tt:hover{border-color:var(--accent)}
+.btn{display:inline-flex;align-items:center;gap:8px;font-family:inherit;font-weight:750;font-size:16px;cursor:pointer;
+  padding:13px 24px;border-radius:999px;border:1px solid transparent;transition:transform .15s,box-shadow .15s}
+.btn.sm{padding:9px 16px;font-size:14px}
+.btn.primary{color:#fff;background:linear-gradient(96deg,var(--indigo),var(--coral) 76%,var(--sun));box-shadow:0 10px 30px rgba(236,139,94,.32)}
+.btn.primary:hover{transform:translateY(-2px);text-decoration:none;box-shadow:0 14px 38px rgba(236,139,94,.42)}
+.btn.ghost{color:var(--ink);background:var(--surface2);border-color:var(--line)}
+.btn.ghost:hover{border-color:var(--accent);text-decoration:none}
+@media (prefers-reduced-motion:reduce){.btn:hover{transform:none}}
+
+/* hero */
+.hero{position:relative;overflow:hidden;padding:80px 0 40px;min-height:88vh;display:flex;align-items:center}
+.sky{position:absolute;inset:-30% -10% auto -10%;height:120%;z-index:0;pointer-events:none;
+  background:
+   radial-gradient(48% 40% at 50% 6%,rgba(244,181,86,.30),transparent 60%),
+   radial-gradient(70% 52% at 50% 0%,rgba(236,139,94,.24),transparent 62%),
+   radial-gradient(120% 82% at 50% -22%,rgba(94,92,230,.34),transparent 72%);
+  filter:blur(8px);animation:rise 16s ease-in-out infinite alternate}
+@keyframes rise{from{transform:translateY(10px);opacity:.82}to{transform:translateY(-14px);opacity:1}}
+@media (prefers-reduced-motion:reduce){.sky{animation:none}}
+.hero .wrap{position:relative;z-index:1;display:grid;grid-template-columns:1.05fr .95fr;gap:44px;align-items:center;width:100%}
+.eyebrow{display:inline-flex;align-items:center;gap:8px;font-size:13px;letter-spacing:.16em;text-transform:uppercase;font-weight:750;color:var(--gold);margin-bottom:20px}
+.eyebrow .dot{width:7px;height:7px;border-radius:50%;background:var(--sun);box-shadow:0 0 0 4px color-mix(in srgb,var(--coral) 24%,transparent)}
+h1.big{font-size:clamp(40px,6.4vw,68px);line-height:1.02;letter-spacing:-.025em;font-weight:750;text-wrap:balance;margin-bottom:20px}
+h1.big .grad{background:linear-gradient(96deg,var(--indigo),var(--violet) 38%,var(--coral) 76%,var(--sun));-webkit-background-clip:text;background-clip:text;color:transparent}
+.lead{font-size:20px;color:var(--muted);max-width:32ch;margin-bottom:28px}
+.cta-row{display:flex;flex-wrap:wrap;gap:12px;align-items:center}
+.appstore{display:inline-flex;align-items:center;gap:9px;padding:12px 18px;border-radius:14px;border:1px solid var(--line);background:var(--surface);color:var(--muted);font-size:14px;font-weight:650}
+.reassure{margin-top:18px;font-size:13.5px;color:var(--faint);display:flex;gap:14px;flex-wrap:wrap}
+.reassure b{color:var(--ink);font-weight:650}
+
+/* phone */
+.phone{justify-self:center;width:300px;border-radius:48px;padding:11px;background:linear-gradient(160deg,#2b2b3d,#0b0b13);
+  box-shadow:0 40px 90px rgba(0,0,0,.55),0 0 0 1px rgba(255,255,255,.07);position:relative}
+.phone img{width:100%;height:auto;display:block;border-radius:38px}
+.phone.float{animation:float 7s ease-in-out infinite alternate}
+@keyframes float{from{transform:translateY(0) rotate(1.5deg)}to{transform:translateY(-16px) rotate(1.5deg)}}
+@media (prefers-reduced-motion:reduce){.phone.float{animation:none;transform:rotate(1.5deg)}}
+
+/* section scaffold */
+section{padding:84px 0;position:relative}
+.kick{font-size:13px;letter-spacing:.15em;text-transform:uppercase;font-weight:750;color:var(--faint);margin-bottom:14px}
+h2.st{font-size:clamp(30px,4.8vw,48px);line-height:1.06;letter-spacing:-.02em;text-wrap:balance;margin-bottom:16px}
+.sub{font-size:19px;color:var(--muted);max-width:60ch}
+.center{text-align:center}.center .sub{margin-left:auto;margin-right:auto}
+
+/* founder story */
+.story{background:
+   radial-gradient(80% 120% at 15% 0%,rgba(94,92,230,.14),transparent 60%),var(--surface);
+  border:1px solid var(--stroke);border-radius:32px;padding:52px clamp(24px,5vw,64px);box-shadow:var(--shadow)}
+.story .q{font-family:ui-serif,"New York",Georgia,serif;font-size:clamp(22px,3vw,30px);line-height:1.4;letter-spacing:-.01em;text-wrap:balance}
+.story p{color:var(--muted);font-size:17px;margin-top:16px;max-width:64ch}
+.story p strong{color:var(--ink);font-weight:650}
+.sig{display:flex;align-items:center;gap:14px;margin-top:28px}
+.sig .mk{width:44px;height:44px;border-radius:12px;background:url("assets/icon.png") center/cover;box-shadow:0 1px 6px rgba(0,0,0,.35)}
+.sig .who{font-size:15px}.sig .who b{color:var(--ink)}.sig .who span{color:var(--faint);display:block;font-size:13px}
+
+/* free manifesto */
+.free-hero{text-align:center}
+.free-badge{display:inline-block;font-size:13px;font-weight:750;letter-spacing:.12em;text-transform:uppercase;color:var(--growth);
+  border:1px solid color-mix(in srgb,var(--growth) 45%,transparent);border-radius:999px;padding:6px 14px;margin-bottom:18px}
+.free-hero h2 .grad{background:linear-gradient(96deg,var(--indigo),var(--coral) 80%,var(--sun));-webkit-background-clip:text;background-clip:text;color:transparent}
+
+/* feature moments */
+.moment{display:grid;grid-template-columns:1fr 1fr;gap:52px;align-items:center;margin:72px 0}
+.moment:nth-child(even) .mv{order:-1}
+.mtag{display:inline-flex;align-items:center;gap:7px;font-size:12px;font-weight:750;letter-spacing:.06em;text-transform:uppercase;
+  color:var(--growth);border:1px solid color-mix(in srgb,var(--growth) 40%,transparent);border-radius:999px;padding:4px 11px;margin-bottom:14px}
+.mkick{font-size:13px;font-weight:750;letter-spacing:.1em;text-transform:uppercase;margin-bottom:8px}
+.moment h3{font-size:clamp(24px,3.2vw,32px);letter-spacing:-.01em;margin-bottom:12px;text-wrap:balance}
+.moment p{color:var(--muted);font-size:17px;max-width:46ch}
+.mv .phone{width:266px}
+
+/* free grid (secondary features) */
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:36px}
+.tile{background:var(--surface);border:1px solid var(--stroke);border-radius:20px;padding:22px;box-shadow:var(--shadow)}
+.tile .ic{width:42px;height:42px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px;margin-bottom:14px;background:color-mix(in srgb,var(--accent) 15%,transparent)}
+.tile h4{font-size:17px;margin-bottom:5px}
+.tile p{color:var(--muted);font-size:14px}
+.tile .free{display:inline-block;margin-top:10px;font-size:11px;font-weight:750;letter-spacing:.05em;color:var(--growth)}
+
+/* how it works */
+.brain{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:34px}
+.step{background:var(--surface2);border:1px solid var(--stroke);border-radius:20px;padding:24px}
+.step .n{font-family:ui-serif,Georgia,serif;font-size:26px;color:var(--accent);margin-bottom:10px}
+.step h4{font-size:17px;margin-bottom:6px}.step p{color:var(--muted);font-size:14.5px}
+
+/* pillar */
+.pillar{text-align:center;border-radius:32px;padding:64px 28px;border:1px solid var(--stroke);box-shadow:var(--shadow);
+  background:radial-gradient(90% 130% at 50% 0%,rgba(94,92,230,.16),transparent 60%),var(--surface)}
+.pillar .lock{font-size:30px}
+.pillar h2{font-size:clamp(26px,4vw,40px);letter-spacing:-.02em;max-width:20ch;margin:12px auto 14px;text-wrap:balance}
+.pillar .chips{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-top:22px}
+.pillar .chips span{font-size:14px;font-weight:600;padding:8px 14px;border-radius:999px;background:var(--surface2);border:1px solid var(--line)}
+
+/* compare */
+.compare{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:30px}
+.compare .col{border-radius:22px;padding:26px;border:1px solid var(--stroke)}
+.compare .them{background:var(--surface2)}
+.compare .us{background:radial-gradient(120% 120% at 50% 0%,rgba(244,181,86,.10),transparent 60%),var(--surface);border-color:color-mix(in srgb,var(--gold) 35%,transparent)}
+.compare h4{font-size:15px;letter-spacing:.04em;text-transform:uppercase;margin-bottom:14px;color:var(--faint)}
+.compare .us h4{color:var(--gold)}
+.compare li{list-style:none;font-size:15px;padding:7px 0;display:flex;gap:10px;color:var(--muted)}
+.compare li b{color:var(--ink);font-weight:600}
+.compare .x{color:var(--faint)}.compare .c{color:var(--growth);font-weight:800}
+
+/* nap labs (optional upgrade) */
+.labs{border:1px solid color-mix(in srgb,var(--gold) 30%,transparent);border-radius:24px;padding:34px;
+  background:radial-gradient(100% 140% at 100% 0%,rgba(226,189,114,.12),transparent 55%),var(--surface)}
+.labs .kick{color:var(--gold)}
+.labs h3{font-size:24px;margin-bottom:10px}
+.labs p{color:var(--muted);max-width:60ch}
+.labs ul{margin:16px 0 0;padding:0;list-style:none;display:grid;grid-template-columns:1fr 1fr;gap:8px 20px}
+.labs li{font-size:14.5px;color:var(--muted);display:flex;gap:9px}.labs li b{color:var(--ink);font-weight:600}
+.labs .star{color:var(--gold)}
+
+/* maker card */
+.maker{display:flex;gap:16px;align-items:center;background:var(--surface);border:1px solid var(--stroke);border-radius:20px;padding:20px;box-shadow:var(--shadow);max-width:640px}
+.maker:hover{border-color:var(--accent);text-decoration:none}
+.maker .mk{flex:none;width:56px;height:56px;border-radius:14px;background:url("assets/kairo-icon.png") center/cover;box-shadow:0 1px 6px rgba(0,0,0,.3)}
+.maker h4{font-size:18px;color:var(--ink);margin-bottom:2px}
+.maker h4 .beta{font-size:11px;font-weight:750;color:var(--muted);border:1px solid var(--line);border-radius:999px;padding:2px 8px;margin-left:8px;vertical-align:middle}
+.maker p{color:var(--muted);font-size:14px}.maker .go{color:var(--accent);font-weight:700;font-size:14px}
+
+/* waitlist */
+.final{text-align:center}
+.final h2{font-size:clamp(32px,5vw,52px);letter-spacing:-.02em;margin-bottom:14px;text-wrap:balance}
+.wl{display:flex;gap:10px;flex-wrap:wrap;max-width:460px;margin:22px auto 0;justify-content:center}
+.wl input{flex:1 1 220px;padding:14px 18px;border-radius:999px;font-size:16px;font-family:inherit;background:var(--surface);border:1px solid var(--line);color:var(--ink)}
+.wl input::placeholder{color:var(--faint)}
+.note{font-size:13px;color:var(--faint);margin-top:12px}
+
+/* footer */
+footer{border-top:1px solid var(--line);padding:40px 0 64px;margin-top:40px}
+.fcols{display:flex;flex-wrap:wrap;gap:26px;justify-content:space-between;align-items:flex-start}
+footer a{color:var(--muted);font-size:14px;display:block;margin:6px 0}
+footer a:hover{color:var(--ink)}
+.fcol h5{font-size:12px;text-transform:uppercase;letter-spacing:.1em;color:var(--faint);margin-bottom:8px}
+.legal{margin-top:26px;font-size:12.5px;color:var(--faint);max-width:64ch}
+
+/* one night narrative */
+.nightline{max-width:760px;margin:38px auto 0}
+.beat{background:var(--surface);border:1px solid var(--stroke);border-left:3px solid var(--bc,var(--sleep));border-radius:16px;padding:20px 22px;box-shadow:var(--shadow)}
+.beat .when{font-weight:750;font-size:15px;color:var(--bc,var(--sleep));display:flex;align-items:baseline;gap:10px;margin-bottom:8px}
+.beat .when span{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--faint);font-weight:700}
+.beat .say{font-family:ui-serif,"New York",Georgia,serif;font-size:18px;line-height:1.4;color:var(--ink);margin-bottom:6px}
+.beat .do{color:var(--muted);font-size:14.5px}.beat .do b{color:var(--ink);font-weight:650}
+.brg{text-align:center;color:var(--faint);font-size:13px;padding:12px 0;font-style:italic}
+.nightcap{text-align:center;margin-top:28px}
+.nightcap p{font-size:18px;color:var(--muted);max-width:42ch;margin:0 auto}
+.nightcap .cap{font-family:ui-serif,"New York",Georgia,serif;color:var(--ink);font-size:20px;margin-top:8px}
+
+/* faq */
+.faq details{border:1px solid var(--line);border-radius:16px;padding:2px 20px;margin-bottom:12px;background:var(--surface)}
+.faq summary{font-weight:700;font-size:17px;padding:16px 0;cursor:pointer;list-style:none;display:flex;justify-content:space-between;align-items:center;gap:12px}
+.faq summary::-webkit-details-marker{display:none}
+.faq summary::after{content:"+";color:var(--accent);font-size:22px;font-weight:400}
+.faq details[open] summary::after{content:"\2013"}
+.faq details p{color:var(--muted);padding:0 0 18px;font-size:15.5px}
+
+/* reveal */
+.reveal{opacity:0;transform:translateY(20px);transition:opacity .7s cubic-bezier(.2,.7,.2,1),transform .7s cubic-bezier(.2,.7,.2,1)}
+.reveal.in{opacity:1;transform:none}
+@media (prefers-reduced-motion:reduce){.reveal{opacity:1!important;transform:none!important}}
+
+@media (max-width:880px){
+  .hero{min-height:auto;padding:56px 0 20px}
+  .hero .wrap{grid-template-columns:1fr;text-align:center}
+  .lead{margin-left:auto;margin-right:auto}.cta-row{justify-content:center}.reassure{justify-content:center}
+  .hero .phone{margin-top:28px}
+  .moment{grid-template-columns:1fr;gap:26px;margin:52px 0}.moment:nth-child(even) .mv{order:0}
+  .mv .phone,.phone{width:250px}
+  .grid,.brain,.compare,.labs ul{grid-template-columns:1fr}
+  .navlinks a.hs{display:none}
+}
+</style>
+<script>(function(){try{var t=localStorage.getItem("dawn-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}})();</script>
 </head>
 <body>
-<div class="ambient" aria-hidden="true"></div>
 
 <nav class="nav">
-  <a class="brand" href="index.html"><span class="mark" aria-hidden="true"></span>Dawn</a>
-  <div class="nav-actions">
-    <a class="hide-sm" href="#features">Features</a>
-    <a class="hide-sm" href="#privacy">Privacy</a>
-    <a class="hide-sm" href="support.html">Support</a>
-    <button class="theme-toggle" id="themeToggle" aria-label="Switch light or dark theme" title="Switch theme">☾</button>
+  <a class="brand" href="#top"><span class="mk" aria-hidden="true"></span>Dawn</a>
+  <div class="navlinks">
+    <a class="hs" href="#free">Free features</a>
+    <a class="hs" href="#story">Our story</a>
+    <a class="hs" href="#privacy">Privacy</a>
+    <a class="btn primary sm" href="#waitlist">Get early access</a>
+    <button class="tt" id="tt" aria-label="Switch theme" title="Switch theme">☾</button>
   </div>
 </nav>
 
-<!-- ============ HERO ============ -->
-<header class="hero">
-  <div class="hero-sky" id="heroSky" aria-hidden="true"></div>
-  <div class="wrap hero-grid">
+<!-- HERO -->
+<header class="hero" id="top">
+  <div class="sky" aria-hidden="true"></div>
+  <div class="wrap">
     <div>
-      <span class="eyebrow">Coming soon to iPhone</span>
-      <h1>The calm, private baby app that <span class="warm serif">learns your baby's rhythm</span></h1>
-      <p class="lead">Track feeds, sleep, and diapers in seconds. Dawn quietly learns the pattern and tells you what's likely next — all on your device.</p>
+      <span class="eyebrow"><span class="dot"></span>Coming soon to iPhone</span>
+      <h1 class="big">The baby app that <span class="grad serif">learns your baby.</span> And gives it away free.</h1>
+      <p class="lead">Log a feed in a tap. Dawn quietly learns the rhythm and tells you what's coming next: the nap window, the next feed. All of it on your iPhone, and free.</p>
       <div class="cta-row">
-        <a class="btn btn-primary" href="#waitlist">Get early access</a>
-        <span class="badge-soon"><span class="apple" aria-hidden="true"></span> Coming to the App&nbsp;Store</span>
+        <a class="btn primary" href="#waitlist">Get early access</a>
+        <span class="appstore"> Coming to the App Store</span>
       </div>
-      <p class="reassure">No account · No ads · Nothing collected</p>
+      <p class="reassure"><span><b>No account</b></span><span><b>No ads</b></span><span><b>Nothing collected</b></span></p>
     </div>
-    <div class="phone tilt" aria-hidden="false">
-      <img src="assets/screen-today.jpg" width="620" height="1348" alt="Dawn's Today screen showing the Golden Hour nap prediction, a Feed card, and quick-add amounts on a deep indigo background.">
-    </div>
+    <div class="phone float"><img src="assets/screen-today.jpg" width="620" height="1348" alt="Dawn's Today screen: a Golden Hour nap prediction, a Feed card, and one-tap amounts on a deep indigo background."></div>
   </div>
 </header>
 
-<!-- ============ EMPATHY ============ -->
-<section class="empathy wrap reveal">
-  <p>It's 3am. You just want to remember when the last feed was — <span class="soft">not fight an app to log it.</span></p>
-</section>
-
-<!-- ============ FEATURE MOMENTS ============ -->
-<div id="features"></div>
-<div class="wrap">
-
-  <div class="moment reveal">
-    <div class="moment-text">
-      <div class="kicker" style="color:var(--feed)">Effortless logging</div>
-      <h3>Log a feed in a single tap.</h3>
-      <p>Big, friendly buttons for feed, sleep, and diaper. Quick-add amounts that adapt as your baby grows, a swipe to start a nursing timer, and a one-handed 3AM Mode for the night shift.</p>
+<!-- FOUNDER STORY -->
+<section id="story">
+  <div class="narrow reveal">
+    <p class="kick">Why I built Dawn</p>
+    <div class="story">
+      <p class="q">I became a parent, and time fell apart. Was that feed two hours ago, or four? Did the baby nap? At 3am I couldn't have told you my own name.</p>
+      <p>I'm one developer. Every app I tried wanted an account, an email, a subscription. Then it wanted to <strong>sell what I typed in about my kid.</strong> All I wanted was to remember the last feed without a fight.</p>
+      <p>So I built the app I needed at 3am. Dawn logs in a tap. It learns your baby's own rhythm and tells you what's next. And it runs entirely on your phone. <strong>No account, nothing uploaded, ever.</strong></p>
+      <p>The smart stuff other apps lock behind a paywall? Free. A tired parent shouldn't have to pay to understand their own baby.</p>
+      <p>I'm building this in the cracks between feeds, in the open. If it makes one exhausted parent's night a little clearer, that's the whole point.</p>
+      <div class="sig">
+        <span class="mk" aria-hidden="true"></span>
+        <div class="who"><b>— Founder</b><span>Solo developer · first-time parent · maker of Dawn</span></div>
+      </div>
     </div>
-    <div class="moment-visual"><div class="phone"><img src="assets/screen-today.jpg" width="620" height="1348" alt="Feed card with one-tap quick-add amounts."></div></div>
-  </div>
-
-  <div class="moment reveal">
-    <div class="moment-text">
-      <div class="kicker" style="color:var(--sleep)">Golden Hour</div>
-      <h3>Know the nap window before the meltdown.</h3>
-      <p>Dawn learns your baby's own wake windows and predicts the next feed and nap — the "sweet spot" other apps sell as a subscription.</p>
-      <span class="tag">Free · and it never leaves your phone</span>
-    </div>
-    <div class="moment-visual"><div class="phone"><img src="assets/screen-child.jpg" width="620" height="1348" alt="The Golden Hour card predicting the next nap window, marked on-device."></div></div>
-  </div>
-
-  <div class="moment reveal">
-    <div class="moment-text">
-      <div class="kicker" style="color:var(--accent)">Insights</div>
-      <h3>See the shape of your days.</h3>
-      <p>Clean charts for feeds, sleep, and diapers, and a rhythm view of when things happen — plus gentle, plain-language patterns Dawn notices along the way.</p>
-    </div>
-    <div class="moment-visual"><div class="phone"><img src="assets/screen-insights.jpg" width="620" height="1348" alt="Insights screen with coming-up predictions, daily averages, and a day-rhythm chart."></div></div>
-  </div>
-
-  <div class="moment reveal">
-    <div class="moment-text">
-      <div class="kicker" style="color:var(--growth)">Grows with your baby</div>
-      <h3>From first feed to first steps.</h3>
-      <p>Plot weight and height against the official WHO percentile curves, capture milestones with a photo, and add solids when the time comes — Dawn keeps up.</p>
-    </div>
-    <div class="moment-visual"><div class="phone"><img src="assets/screen-child.jpg" width="620" height="1348" alt="Child profile with growth and milestones."></div></div>
-  </div>
-
-  <div class="moment reveal">
-    <div class="moment-text">
-      <div class="kicker" style="color:var(--sleep)">3AM Mode</div>
-      <h3>Built for the middle of the night.</h3>
-      <p>A dark, one-handed screen for night feeds, with a read-aloud recap of how the night has gone — so you barely have to open your eyes.</p>
-      <span class="tag">Nobody else has this</span>
-    </div>
-    <div class="moment-visual"><div class="phone"><img src="assets/screen-today.jpg" width="620" height="1348" alt="Dawn in its calm Nightfall dark theme."></div></div>
-  </div>
-
-  <div class="moment reveal">
-    <div class="moment-text">
-      <div class="kicker" style="color:var(--feed)">Ready for the doctor</div>
-      <h3>A tidy summary, one tap away.</h3>
-      <p>Export a clean PDF of any week or month to hand or email your pediatrician. And drive it all from the Home Screen widget, Lock Screen Live Activities, and Siri.</p>
-    </div>
-    <div class="moment-visual"><div class="phone"><img src="assets/screen-insights.jpg" width="620" height="1348" alt="Reports and doctor-ready summary."></div></div>
-  </div>
-
-</div>
-
-<!-- ============ ONE NIGHT WITH DAWN ============ -->
-<section class="wrap">
-  <div class="reveal" style="text-align:center;margin-bottom:34px">
-    <div class="section-eyebrow" style="color:var(--sleep)">A night in the life</div>
-    <h2 class="section-title serif">One night with Dawn.</h2>
-    <p class="section-sub" style="margin:10px auto 0">The hours nobody sees — made a little calmer, and a little clearer by morning.</p>
-  </div>
-  <div class="nightline">
-    <div class="beat reveal" style="--bc:var(--sleep)">
-      <div class="when">3:04 AM<span>3AM Mode</span></div>
-      <p class="say">The dimmed, one-handed screen — one tap logs the feed.</p>
-      <p class="do">No lights, no waking all the way up. <b>Back to sleep in seconds.</b></p>
-    </div>
-    <div class="brg reveal">By the time you stir again…</div>
-    <div class="beat reveal" style="--bc:var(--accent)">
-      <div class="when">6:20 AM<span>Night Recap</span></div>
-      <p class="say">&ldquo;Three feeds, one long four-hour stretch. Your longest yet.&rdquo;</p>
-      <p class="do">Your whole night, <b>read back in a sentence</b> — no scrolling required.</p>
-    </div>
-    <div class="brg reveal">And as the day begins…</div>
-    <div class="beat reveal" style="--bc:var(--gold)">
-      <div class="when">Morning<span>Golden Hour</span></div>
-      <p class="say">&ldquo;Next nap window looks like 8:41 – 10:25. Watch for sleepy cues.&rdquo;</p>
-      <p class="do">The rhythm you've been logging, <b>turned into a plan for today.</b></p>
-    </div>
-  </div>
-  <div class="nightcap reveal">
-    <p>You logged the night. Dawn read it back. And the morning already makes a little more sense.</p>
-    <p class="cap">That's the whole idea.</p>
   </div>
 </section>
 
-<!-- ============ PRIVACY PILLAR ============ -->
-<section id="privacy" class="wrap">
-  <div class="pillar reveal">
+<!-- FREE MANIFESTO -->
+<section id="free">
+  <div class="wrap free-hero reveal">
+    <span class="free-badge">The smart stuff, free</span>
+    <h2 class="st">Everyone else charges for the intelligence.<br><span class="grad serif">We give it to you.</span></h2>
+    <p class="sub center">Nap predictions. Growth percentiles. Insights. The features parents actually download a tracker for. All free in Dawn, and computed right on your iPhone.</p>
+  </div>
+
+  <div class="wrap">
+
+    <div class="moment reveal">
+      <div>
+        <span class="mtag">✓ Free · on-device</span>
+        <div class="mkick" style="color:var(--sleep)">Golden Hour</div>
+        <h3>It learns when your baby gets sleepy, before the meltdown.</h3>
+        <p>Dawn studies your baby's own wake windows and predicts the next nap and feed. It even tells you how sure it is, and why. A glass box, never a black box. The window and your trend charts are free. Only to-the-minute timing lives in the optional upgrade.</p>
+      </div>
+      <div class="mv"><div class="phone"><img src="assets/screen-today.jpg" width="620" height="1348" alt="The Golden Hour card predicting the nap window, marked on-device."></div></div>
+    </div>
+
+    <div class="moment reveal">
+      <div>
+        <span class="mtag">✓ Free</span>
+        <div class="mkick" style="color:var(--accent)">Insights</div>
+        <h3>See the shape of your days.</h3>
+        <p>Beautiful charts for feeds, sleep, and diapers, plus a 24-hour rhythm view of when everything happens, plus gentle, plain-language patterns Dawn notices for you ("feeds have settled to about every 2h 40m"). Your trends are always free.</p>
+      </div>
+      <div class="mv"><div class="phone"><img src="assets/screen-insights.jpg" width="620" height="1348" alt="Insights: coming-up predictions, daily averages, and a day-rhythm chart."></div></div>
+    </div>
+
+    <div class="moment reveal">
+      <div>
+        <span class="mtag">✓ Free</span>
+        <div class="mkick" style="color:var(--growth)">Grows with your baby</div>
+        <h3>The same growth curves your pediatrician uses.</h3>
+        <p>Plot weight and height against the official WHO percentile curves, and see exactly where your little one lands. Capture milestones with a photo, and log solids when the time comes. Dawn keeps up as they grow.</p>
+      </div>
+      <div class="mv"><div class="phone"><img src="assets/screen-child.jpg" width="620" height="1348" alt="Child profile with WHO growth percentiles and milestones."></div></div>
+    </div>
+
+    <div class="grid">
+      <div class="tile reveal"><div class="ic">⚡️</div><h4>One-tap logging</h4><p>Big, friendly buttons. Quick-add amounts that adapt as your baby grows. Swipe to start a nursing timer.</p><span class="free">FREE</span></div>
+      <div class="tile reveal"><div class="ic">🌙</div><h4>3AM Mode</h4><p>A dark, one-handed screen made for night feeds, so you barely have to open your eyes.</p><span class="free">FREE</span></div>
+      <div class="tile reveal"><div class="ic">☀️</div><h4>Two premium themes</h4><p>Nightfall (dark, calm) and Daybreak (light). Both crafted, both included.</p><span class="free">FREE</span></div>
+      <div class="tile reveal"><div class="ic">🔆</div><h4>Day &amp; night breakdown</h4><p>See how much sleep and how many feeds happened by day vs night, on your own cut-offs.</p><span class="free">FREE</span></div>
+      <div class="tile reveal"><div class="ic">📲</div><h4>Widget · Live Activity · Siri</h4><p>Log from the Home Screen, watch a nursing timer on the Lock Screen, or say "Log a feed in Dawn."</p><span class="free">FREE</span></div>
+      <div class="tile reveal"><div class="ic">☁️</div><h4>Syncs across your devices</h4><p>Your data follows you to your iPad through your own private iCloud. Both parents' phones stay in step.</p><span class="free">FREE</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ONE NIGHT WITH DAWN -->
+<section>
+  <div class="wrap center reveal">
+    <p class="kick" style="color:var(--sleep)">A night in the life</p>
+    <h2 class="st serif">One night with Dawn.</h2>
+    <p class="sub center">The hours nobody sees, made a little calmer, and a little clearer by morning.</p>
+  </div>
+  <div class="wrap">
+    <div class="nightline">
+      <div class="beat reveal" style="--bc:var(--sleep)">
+        <div class="when">3:04 AM <span>3AM Mode</span></div>
+        <p class="say">The dimmed, one-handed screen. One tap logs the feed.</p>
+        <p class="do">No lights, no waking all the way up. <b>Back to sleep in seconds.</b></p>
+      </div>
+      <div class="brg reveal">By the time you stir again…</div>
+      <div class="beat reveal" style="--bc:var(--accent)">
+        <div class="when">6:20 AM <span>Night Recap</span></div>
+        <p class="say">“Three feeds, one long four-hour stretch. Your longest yet.”</p>
+        <p class="do">Your whole night, <b>read back in a sentence.</b> No scrolling required.</p>
+      </div>
+      <div class="brg reveal">And as the day begins…</div>
+      <div class="beat reveal" style="--bc:var(--gold)">
+        <div class="when">Morning <span>Golden Hour</span></div>
+        <p class="say">“Next nap window looks like 8:41 – 10:25. Watch for sleepy cues.”</p>
+        <p class="do">The rhythm you've been logging, <b>turned into a plan for today.</b></p>
+      </div>
+    </div>
+    <div class="nightcap reveal">
+      <p>You logged the night. Dawn read it back. And the morning already makes a little more sense.</p>
+      <p class="cap">That's the whole idea.</p>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section>
+  <div class="wrap center reveal">
+    <p class="kick">How the magic works</p>
+    <h2 class="st">Smart, honest, and never leaves your phone.</h2>
+    <p class="sub center">Dawn's predictions aren't a guess pulled from strangers' data. They're learned from <em>your</em> baby, on <em>your</em> device. And Dawn always shows its work.</p>
+  </div>
+  <div class="wrap brain">
+    <div class="step reveal"><div class="n">1</div><h4>It learns your baby</h4><p>Every feed and nap teaches Dawn your baby's real rhythm: how long they stay awake, how often they eat.</p></div>
+    <div class="step reveal"><div class="n">2</div><h4>It fills the gaps</h4><p>New baby, no pattern yet? Dawn leans on age-typical norms and blends toward your baby's own data as it arrives, and tells you which it's using.</p></div>
+    <div class="step reveal"><div class="n">3</div><h4>It stays yours</h4><p>All of it runs on-device. No server, no account, nothing uploaded. The intelligence is private by construction.</p></div>
+  </div>
+</section>
+
+<!-- PRIVACY PILLAR -->
+<section id="privacy">
+  <div class="wrap"><div class="pillar reveal">
     <div class="lock" aria-hidden="true">🔒</div>
     <h2>Your baby's data never becomes someone's product.</h2>
-    <p>No account. No sign-up. No ads. No analytics. Dawn has no server of its own — everything you log stays on your device and in your own private iCloud. Every prediction is calculated right on your iPhone. We literally can't see your data.</p>
-    <div class="points">
-      <span>Nothing collected</span>
-      <span>No third-party SDKs</span>
-      <span>On-device intelligence</span>
-      <span>Private iCloud sync</span>
+    <p class="sub" style="margin:0 auto">No account. No sign-up. No ads. No analytics. Dawn has no server of its own. Everything you log stays on your device and your private iCloud, and every prediction is calculated right on your iPhone. We literally can't see your data.</p>
+    <div class="chips"><span>Nothing collected</span><span>No third-party SDKs</span><span>On-device intelligence</span><span>Private iCloud sync</span></div>
+  </div></div>
+</section>
+
+<!-- COMPARE -->
+<section>
+  <div class="wrap reveal">
+    <p class="kick">Why parents switch</p>
+    <h2 class="st">Smarts without the price, or the data harvesting.</h2>
+    <div class="compare">
+      <div class="col them">
+        <h4>The popular trackers</h4>
+        <ul>
+          <li><span class="x">✕</span> Nap predictions locked behind <b>$70–120/yr</b></li>
+          <li><span class="x">✕</span> Require an account and email</li>
+          <li><span class="x">✕</span> Use your family's data for "research"</li>
+          <li><span class="x">✕</span> Ads and upsells throughout</li>
+        </ul>
+      </div>
+      <div class="col us">
+        <h4>Dawn</h4>
+        <ul>
+          <li><span class="c">✓</span> Nap &amp; feed predictions <b>free</b></li>
+          <li><span class="c">✓</span> No account. Open it and log</li>
+          <li><span class="c">✓</span> Nothing collected, ever</li>
+          <li><span class="c">✓</span> Growth curves, insights, themes, all included</li>
+        </ul>
+      </div>
     </div>
   </div>
 </section>
 
-<!-- ============ WHY DAWN ============ -->
-<section class="wrap">
-  <div class="reveal">
-    <div class="section-eyebrow">Why Dawn</div>
-    <h2 class="section-title">Smarts without the price — or the data harvesting.</h2>
-    <p class="section-sub" style="margin-bottom:28px">The popular trackers make you choose: pay for predictions, or hand over your family's data. Dawn doesn't.</p>
-  </div>
-  <div class="why-grid">
-    <div class="card reveal"><span class="big">Free predictions</span><h4>Not behind a subscription</h4><p>The nap and feed forecasts others charge for are simply included — because they run on your phone, they cost us nothing.</p></div>
-    <div class="card reveal"><span class="big">Private by design</span><h4>Not "privacy-friendly," private</h4><p>No account and no server means there's nothing to leak, sell, or subpoena. That's a promise the architecture keeps, not marketing.</p></div>
-    <div class="card reveal"><span class="big">Genuinely considered</span><h4>Not another gray form</h4><p>Two beautiful themes, a night mode made for 3am, and clinical tools like WHO growth curves — the details most apps skip.</p></div>
+<!-- NAP LABS -->
+<section>
+  <div class="wrap reveal"><div class="labs">
+    <p class="kick">Optional, never required</p>
+    <h3 class="serif">Nap Labs, for parents who want every last minute.</h3>
+    <p>Everything above is free forever. If you want to go deeper, one optional upgrade unlocks the fully-tuned engine, and it keeps the same privacy promise.</p>
+    <ul>
+      <li><span class="star">★</span><div><b>Exact nap timing</b>, to the minute, with the full why and per-baby tuning</div></li>
+      <li><span class="star">★</span><div><b>Foresight alerts</b>, a nudge before the next feed and nap</div></li>
+      <li><span class="star">★</span><div><b>Night Recap</b>, your whole night read aloud at 3am</div></li>
+      <li><span class="star">★</span><div><b>Doctor Report</b>, a clean PDF for your pediatrician</div></li>
+    </ul>
+  </div></div>
+</section>
+
+<!-- FAQ -->
+<section class="faq">
+  <div class="narrow reveal">
+    <p class="kick">Good to know</p>
+    <h2 class="st" style="margin-bottom:26px">Questions parents ask</h2>
+    <details><summary>Is Dawn really free?</summary><p>Yes. The tracking and the on-device predictions other apps put behind a subscription are free. One optional upgrade, Nap Labs, adds depth like to-the-minute nap timing. The core stays free, forever.</p></details>
+    <details><summary>Where does my data go?</summary><p>Onto your device, and if you use iCloud, into your own private iCloud account for backup and sync. It never reaches us. We have no server and collect nothing. Really.</p></details>
+    <details><summary>Does it work for two parents?</summary><p>Your data syncs across your own devices through private iCloud, so your phones stay in step. Shared access between separate accounts is on the way.</p></details>
+    <details><summary>Is this medical advice?</summary><p>No. Dawn records and visualizes what you log and shows patterns from your own data. It isn't a diagnostic tool. Always check with your pediatrician.</p></details>
+    <details><summary>What does it run on?</summary><p>iPhone, with a Home Screen widget, Lock Screen Live Activities, and Siri. Join the list below and we'll tell you the moment it's live.</p></details>
   </div>
 </section>
 
-<!-- ============ FAQ ============ -->
-<section class="narrow faq">
-  <div class="reveal">
-    <div class="section-eyebrow">Good to know</div>
-    <h2 class="section-title" style="margin-bottom:26px">Questions parents ask</h2>
-  </div>
-  <div class="reveal">
-    <details><summary>Is Dawn free?</summary><p>Dawn is free to use, including the on-device predictions other apps put behind a subscription. A future optional upgrade may add extras, but the core tracking and forecasts stay free.</p></details>
-    <details><summary>Where does my data go?</summary><p>Onto your device, and — if you use iCloud — into your own private iCloud account for backup and sync across your devices. It never reaches us. We have no server and collect nothing.</p></details>
-    <details><summary>Does it work for two parents?</summary><p>Yes — your Dawn data syncs across your own devices through private iCloud, so your phones stay in step. Shared access between separate accounts is on the way.</p></details>
-    <details><summary>Is this medical advice?</summary><p>No. Dawn records and visualizes what you log and shows patterns from your own data. It isn't a diagnostic tool — always check with your pediatrician.</p></details>
-    <details><summary>What platforms does it support?</summary><p>Dawn is built for iPhone, with a Home Screen widget, Lock Screen Live Activities, and Siri. Sign up below and we'll tell you the moment it's live.</p></details>
-  </div>
-</section>
-
-<!-- ============ FINAL CTA / WAITLIST ============ -->
-<section id="waitlist" class="wrap final">
-  <div class="reveal">
-    <h2>Be there at first light.</h2>
-    <p class="section-sub" style="margin:0 auto 26px">Join the early-access list and we'll email you the day Dawn arrives on the App Store. One email, nothing else — and you can guess how we feel about spam.</p>
-    <!-- Waitlist: works with zero backend via the visitor's own mail app.
-         To use a form service instead, set data-endpoint on the form to your
-         Formspree URL (https://formspree.io/f/xxxx) and it will POST there. -->
-    <form class="waitlist" id="waitlistForm" data-endpoint="">
-      <input type="email" name="email" placeholder="you@email.com" required aria-label="Your email">
-      <button class="btn btn-primary" type="submit">Notify me at launch</button>
-    </form>
-    <p class="form-note" id="formNote">We only use it to tell you Dawn is live. No lists, no sharing, no spam.</p>
-  </div>
-</section>
-
-<!-- ============ FROM THE SAME MAKER ============ -->
-<section class="wrap">
-  <div class="reveal">
-    <div class="section-eyebrow">From the same maker</div>
-    <h2 class="section-title">More calm, private apps.</h2>
-    <p class="section-sub" style="margin-bottom:8px">Dawn is part of a small family of apps built by the same hands — the same care for your privacy, the same quiet design.</p>
-  </div>
-  <div class="apps-grid reveal">
-    <a class="app-card" href="https://kairofasting.com" target="_blank" rel="noopener">
-      <span class="app-mark kairo" aria-hidden="true"></span>
+<!-- MAKER -->
+<section>
+  <div class="wrap reveal">
+    <p class="kick">From the same maker</p>
+    <h2 class="st">More calm, private apps.</h2>
+    <p class="sub" style="margin-bottom:22px">Built by the same hands, with the same care for your privacy.</p>
+    <a class="maker" href="https://kairofasting.com" target="_blank" rel="noopener">
+      <span class="mk" aria-hidden="true"></span>
       <div>
-        <h4>Kairo <span class="pill">Beta</span></h4>
-        <p>Fasting that adapts to your recovery — personalized fasting windows and coaching that adjust to your body's actual recovery.</p>
-        <span class="app-link">Learn more &rarr;</span>
+        <h4>Kairo <span class="beta">Beta</span></h4>
+        <p>Fasting that adapts to your recovery. Personalized windows and coaching that adjust to your body.</p>
+        <span class="go">Learn more →</span>
       </div>
     </a>
   </div>
 </section>
 
-<!-- ============ FOOTER ============ -->
+<!-- FINAL CTA -->
+<section id="waitlist">
+  <div class="wrap final reveal">
+    <h2>Be there at first light.</h2>
+    <p class="sub" style="margin:0 auto">Join the early-access list and we'll email you the day Dawn arrives on the App Store. One email, and you can guess how we feel about spam.</p>
+    <form class="wl" id="wl" action="https://buttondown.email/api/emails/embed-subscribe/KairoFasting" method="post" target="_blank">
+      <input type="email" name="email" placeholder="you@email.com" required aria-label="Your email">
+      <input type="hidden" name="tag" value="dawn-waitlist">
+      <button class="btn primary" type="submit">Notify me at launch</button>
+    </form>
+    <p class="note" id="note">We only use it to tell you Dawn is live. No lists, no sharing, no spam.</p>
+  </div>
+</section>
+
 <footer>
-  <div class="wrap foot-grid">
+  <div class="wrap fcols">
     <div>
-      <a class="brand" href="index.html" style="font-size:18px"><span class="mark" aria-hidden="true"></span>Dawn</a>
-      <p class="foot-legal">A calm, private way to track your baby's day. Dawn records and visualizes what you log — it is not medical advice. Always check with your pediatrician.</p>
+      <a class="brand" href="#top" style="font-size:18px"><span class="mk" aria-hidden="true"></span>Dawn</a>
+      <p class="legal">A calm, private way to track your baby's day. Dawn records and visualizes what you log. It is not medical advice. Always check with your pediatrician.</p>
     </div>
-    <div class="foot-col">
-      <h5>Product</h5>
-      <a href="#features">Features</a>
-      <a href="#privacy">Privacy</a>
-      <a href="#waitlist">Early access</a>
-    </div>
-    <div class="foot-col">
-      <h5>Company</h5>
-      <a href="privacy.html">Privacy Policy</a>
-      <a href="support.html">Support</a>
-      <a href="mailto:dawn@kairofasting.com">Contact</a>
-    </div>
+    <div class="fcol"><h5>Product</h5><a href="#free">Free features</a><a href="#story">Our story</a><a href="#privacy">Privacy</a><a href="#waitlist">Early access</a></div>
+    <div class="fcol"><h5>Company</h5><a href="privacy.html">Privacy Policy</a><a href="support.html">Support</a><a href="mailto:dawn@kairofasting.com">Contact</a></div>
   </div>
 </footer>
 
 <script>
-  // ----- theme toggle -----
-  (function () {
-    var btn = document.getElementById("themeToggle");
-    function current() {
-      return document.documentElement.getAttribute("data-theme")
-        || (window.matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark");
-    }
-    function apply(t) {
-      document.documentElement.setAttribute("data-theme", t);
-      try { localStorage.setItem("dawn-theme", t); } catch (e) {}
-      btn.textContent = t === "light" ? "☀" : "☾";
-    }
-    btn.textContent = current() === "light" ? "☀" : "☾";
-    btn.addEventListener("click", function () { apply(current() === "light" ? "dark" : "light"); });
-  })();
+(function(){
+  var b=document.getElementById("tt");
+  function cur(){return document.documentElement.getAttribute("data-theme")||(matchMedia("(prefers-color-scheme:light)").matches?"light":"dark")}
+  function set(t){document.documentElement.setAttribute("data-theme",t);try{localStorage.setItem("dawn-theme",t)}catch(e){}b.textContent=t==="light"?"☀":"☾"}
+  b.textContent=cur()==="light"?"☀":"☾";b.onclick=function(){set(cur()==="light"?"dark":"light")};
+})();
+(function(){
+  var reduce=matchMedia("(prefers-reduced-motion:reduce)").matches, els=document.querySelectorAll(".reveal");
+  if(reduce||!("IntersectionObserver"in window)){els.forEach(function(e){e.classList.add("in")});return}
+  var io=new IntersectionObserver(function(en){en.forEach(function(e){if(e.isIntersecting){e.target.classList.add("in");io.unobserve(e.target)}})},{threshold:.12});
+  els.forEach(function(e){io.observe(e)});
+})();
 
-  // ----- time-of-day sunrise tint (a nod to the app's living hero) -----
-  (function () {
-    var sky = document.getElementById("heroSky");
-    if (!sky) return;
-    var h = new Date().getHours();
-    // dawn warm, midday cool-bright, dusk rose, night deep — subtle hue shift
-    var hue = (h >= 5 && h < 9) ? 25 : (h >= 9 && h < 17) ? -10 : (h >= 17 && h < 21) ? 15 : -30;
-    sky.style.filter = "blur(6px) hue-rotate(" + hue + "deg)";
-  })();
-
-  // ----- scroll reveal -----
-  (function () {
-    var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    var items = document.querySelectorAll(".reveal");
-    if (reduce || !("IntersectionObserver" in window)) {
-      items.forEach(function (el) { el.classList.add("in"); });
-      return;
-    }
-    var io = new IntersectionObserver(function (entries) {
-      entries.forEach(function (e) { if (e.isIntersecting) { e.target.classList.add("in"); io.unobserve(e.target); } });
-    }, { threshold: 0.12 });
-    items.forEach(function (el) { io.observe(el); });
-  })();
-
-  // ----- waitlist: posts to a form service if configured, else opens the
-  // visitor's own mail app (zero backend, nothing passes through a third party) -----
-  (function () {
-    var form = document.getElementById("waitlistForm");
-    var note = document.getElementById("formNote");
-    if (!form) return;
-    form.addEventListener("submit", function (e) {
-      var endpoint = form.getAttribute("data-endpoint");
-      var email = form.querySelector("input[type=email]").value.trim();
-      if (endpoint) return; // let the browser POST to the configured service
-      e.preventDefault();
-      if (!email) return;
-      var subject = encodeURIComponent("Dawn early access");
-      var body = encodeURIComponent("Please add me to the Dawn waitlist: " + email);
-      window.location.href = "mailto:dawn@kairofasting.com?subject=" + subject + "&body=" + body;
-      note.textContent = "Thanks! Your mail app is opening — hit send and you're on the list.";
-    });
-  })();
 </script>
 </body>
 </html>
